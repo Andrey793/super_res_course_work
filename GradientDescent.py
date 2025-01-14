@@ -1,4 +1,3 @@
-import numpy as np
 
 def GradientDescent(lhs, rhs, initial_guess, max_iter=100, epsilon=0.01):
     """
@@ -12,7 +11,6 @@ def GradientDescent(lhs, rhs, initial_guess, max_iter=100, epsilon=0.01):
 
     Returns: np.ndarray - optimal solution
     """
-    #x = initial_guess.reshape((1, -1)).T
     x = initial_guess
     iter = 0
     res = lhs.T @ (rhs - lhs @ x)
@@ -22,7 +20,6 @@ def GradientDescent(lhs, rhs, initial_guess, max_iter=100, epsilon=0.01):
     while iter < max_iter and mse > epsilon ** 2 * mse0:
         res = lhs.T @ (rhs - lhs @ x)
         x = x + res
-        #x = (x > 0.5).astype(np.float64)
         mse = res.T @ res
         print(f"Gradient Descent iteration {iter} mean-squared error: {mse:.4f}")
         iter += 1

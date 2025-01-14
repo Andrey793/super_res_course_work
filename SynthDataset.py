@@ -1,8 +1,6 @@
 import numpy as np
 from scipy.ndimage import gaussian_filter
 from scipy.interpolate import griddata
-import matplotlib.pyplot as plt
-from scipy.sparse import random
 import cv2
 import scipy
 
