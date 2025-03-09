@@ -25,15 +25,15 @@ def synth_dataset(im, num_images, blur_sigma):
     cropped_original : ndarray
         Cropped original image corresponding to the common area of low-res images.
     """
-    pad_ratio = 0.2
+    pad_ratio = 0
     rows, cols = im.shape
 
     # Calculate the cropping indices
     working_row_sub = np.arange(
-        max(0, int(0.5 * pad_ratio * rows) - 1), int((1 - 0.5 * pad_ratio) * rows + 1)
+        max(0, int(0.5 * pad_ratio * rows)), int((1 - 0.5 * pad_ratio) * rows)
     )
     working_col_sub = np.arange(
-        max(0, int(0.5 * pad_ratio * cols) - 1), int((1 - 0.5 * pad_ratio) * cols + 1)
+        max(0, int(0.5 * pad_ratio * cols)), int((1 - 0.5 * pad_ratio) * cols)
     )
 
     # Crop the original image
@@ -46,7 +46,6 @@ def synth_dataset(im, num_images, blur_sigma):
     # Add the first image (no translation)
     offsets[0, :] = [0, 0]
     images.append(cropped_original)
-    #my_offsets = [0.7, -0.3, 0.2, -0.55]
     # Generate random translations for additional images
     for i in range(1, num_images):
         off = 2 * np.random.rand(1) - 1
@@ -67,7 +66,6 @@ def synth_dataset(im, num_images, blur_sigma):
     kernel = kernel @ kernel.T
     # Apply Gaussian blur to each image
     for i in range(num_images):
-        #images[i] = gaussian_filter(images[i], sigma=blur_sigma)
         images[i] = scipy.ndimage.convolve(images[i], kernel)
 
         # Downsample the image by a factor of 2
@@ -75,4 +73,5 @@ def synth_dataset(im, num_images, blur_sigma):
         images[i] = cur_im[1::2, 1::2]
 
     return images, offsets, cropped_original
+
 
