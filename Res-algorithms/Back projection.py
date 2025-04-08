@@ -4,7 +4,14 @@ import cv2
 import scipy
 import math
 
+"""
+Реализация алгоритма, описанного в статье 'Improving resolution by image registration' от Irani и Peleg. 
+"""
+
 def synth_dataset(im, sigma, num_images, scale=1):
+    """
+    Создание num_images изображений низкого разрешения из оригинала im
+    """
     rows, cols = im.shape
 
     # Calculate the cropping indices
@@ -19,7 +26,6 @@ def synth_dataset(im, sigma, num_images, scale=1):
     # Generate random translations for additional images
     for i in range(1, num_images):
         off = 2 * np.random.rand(1) - 1
-        # off = [my_offsets[i]]
         offsets[i, :] = [off[0], off[0]]
         offset_row_sub = working_row_sub - offsets[i, 1]
         offset_col_sub = working_col_sub - offsets[i, 0]
@@ -38,13 +44,16 @@ def synth_dataset(im, sigma, num_images, scale=1):
     for i in range(num_images):
         images[i] = scipy.ndimage.convolve(images[i], kernel)
 
-        # Downsample the image by a factor of 2
+        # Downsample the image
         cur_im = images[i]
         images[i] = cur_im[0::scale, 0::scale]
 
     return images, offsets
 
 def simulate_lr(f_n, sigma, offsets, scale=1):
+    """
+    Из итеративного предположения об оригинале f_n генерируется набор изображений низкого разрешения.
+    """
     lr_images = []
     rows, cols = f_n.shape
     x, y = np.meshgrid(np.arange(cols), np.arange(rows))
@@ -68,6 +77,9 @@ def gaussian_psf(pix, sigma):
     return 1/(2*math.pi*sigma**2) * np.exp(-np.sum(pix**2) / (2*sigma**2))
 
 def back_projection(lr_real, f_n, sigma, offsets, scale=1, normal = 2):
+    """
+    Основной алгоритм IBP, который из начального предположения итеративно вычисляет оригинал.
+    """
     lr_k = np.array(simulate_lr(f_n, sigma, offsets, scale))
     error_cur = error_func(lr_real, lr_k)
     error_prev = float('inf')
@@ -78,8 +90,6 @@ def back_projection(lr_real, f_n, sigma, offsets, scale=1, normal = 2):
     denominator = normal * np.sum(np.sqrt(kernel))
     while abs(error_cur - error_prev) > 5 and iter < 20:
         error_prev = error_cur
-        #for x, y in f_n:
-            #f_n[x][y] +=
         f_n = f_n + scipy.ndimage.convolve(cv2.resize(np.sum(lr_real - lr_k, axis=0), f_n.shape), kernel)/ denominator
         lr_k = np.array(simulate_lr(f_n, sigma, offsets, scale))
         error_cur = error_func(lr_real, lr_k)

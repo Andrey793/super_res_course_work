@@ -1,6 +1,5 @@
 import requests
 from selenium import webdriver
-from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 import cv2
 import pathlib
@@ -27,7 +26,6 @@ def detect_circles(image)->bool:
 def parse_page(url, i=0):
     options = webdriver.chrome.options.Options()
     options.add_argument('--disable-blink-features=AutomationControlled')
-    # options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
@@ -57,7 +55,6 @@ def parse_page(url, i=0):
 def parse_url(url, index, i=0):
     options = webdriver.chrome.options.Options()
     options.add_argument('--disable-blink-features=AutomationControlled')
-    #options.add_argument('--headless')
     options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')

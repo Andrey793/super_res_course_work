@@ -1,3 +1,12 @@
-В cloudy nights постарался сохранить изобрадения только полных лун из https://www.cloudynights.com/gallery/category/322-lunar/
+### main.py -
+Программа, которая скачивает изображения полной Луны с сайта Clody Nights и заполняет csv файл с данными об ориганле.
 
-В roboflow хранятся луны из этого [датасета](https://universe.roboflow.com/planetsyolo/planets_and_moons/browse?queryText=&pageSize=50&startingIndex=0&browseQuery=true)
+### sift.py - 
+Применяет алгоритм SIFT для детекции особых областей изображения, находит совпадения таких областей с заданным референсным изображением и выравнивает относительно его все остальные. 
+
+### aligned_1, alined_2 - 
+Примеры результатов отбора и выравнивания для разных параметров. 
+
+### Cloudy_nights - 
+Все собранные снимки с Cloudy Nights 
+

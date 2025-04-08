@@ -13,22 +13,14 @@ images = [cv2.imread(str(file)) for file in directory.glob("*.jpg")][:9]
 for i in range(0, len(images)):
     images[i] = color.rgb2gray(images[i])
     images[i] = images[i].astype(np.float64)
-    #images[i] = cv2.resize(images[i],  (900, 900))
-    #images[i] -= np.mean(images[i])
 
 offsets = [ [0, 0] for _ in range(len(images))]
 # Compute the Super-Resolution image
 for sigma in np.arange(0.2, 0.3, 0.15):
     lhs, rhs = sr_equations(images, offsets, sigma)
-    col_sums = lhs.sum(axis=0)
-    K = diags(col_sums, [0], shape=(col_sums.shape[1], col_sums.shape[1]))
-    #initial_guess = scipy.sparse.linalg.spsolve(scipy.sparse.csr_matrix(K), lhs.T @ rhs)
-    print(np.sqrt(lhs.shape[1]))
     initial_guess = cv2.resize(images[0], (int(np.sqrt(lhs.shape[1])), int(np.sqrt(lhs.shape[1]))))
     norm_init = (np.abs(initial_guess) * 255 / np.max(np.abs(initial_guess))).astype(np.uint8)
-    #cv2.imwrite(f'kacmarz/initial_venus.jpg', norm_init)
     initial_guess = initial_guess.flatten()
-    #HR = GradientDescent.GradientDescent(lhs, rhs, initial_guess)
     res = scipy.sparse.linalg.lsqr(lhs, rhs, iter_lim=3000, x0=initial_guess)
 
     HR = res[0]
@@ -40,7 +32,6 @@ for sigma in np.arange(0.2, 0.3, 0.15):
     print("istop", istop)
     print("r1norm", r1norm)
     print("itn", itn)
-
 
     HR = HR.reshape(int(np.sqrt(HR.size)), -1)
 

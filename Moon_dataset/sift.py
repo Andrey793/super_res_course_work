@@ -4,9 +4,7 @@ import glob
 import os
 
 
-
-
-# Load all images from a folder
+# Load all images
 image_folder = "/home/andrey/HSE/Course work/Moon_dataset/moons_centerd"
 image_paths = sorted(glob.glob(os.path.join(image_folder, "*.tif")))
 
@@ -16,9 +14,7 @@ images = [cv2.imread(img) for img in image_paths]
 # Convert images to grayscale
 gray_images = [cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) for img in images]
 
-
 sift = cv2.SIFT_create()
-
 
 keypoints_descriptors = [sift.detectAndCompute(img, None) for img in gray_images]
 
@@ -38,7 +34,6 @@ aligned_images = [base_img]
 for i in range(1, len(images)):
     kp, desc = keypoints_descriptors[i]
 
-
     matches = flann.knnMatch(base_desc, desc, k=2)
 
     #ratio test
@@ -54,16 +49,13 @@ for i in range(1, len(images)):
         # homography
         H, mask = cv2.findHomography(dst_pts, src_pts, cv2.RANSAC, 5.0)
 
-
         height, width, _ = base_img.shape
         aligned = cv2.warpPerspective(images[i], H, (width, height))
         aligned_images.append(aligned)
 
 
-output_folder = "aligned_images4"
+output_folder = "aligned_images"
 os.makedirs(output_folder, exist_ok=True)
 
 for i, img in enumerate(aligned_images):
     cv2.imwrite(os.path.join(output_folder, f"aligned_{i}.jpg"), img)
-
-print(f"Aligned images saved in {output_folder}")
