@@ -93,12 +93,12 @@ def blur_mat_y(super_size, blur_sigma):
     """
     Creates a blurring operator for the Y axis.
     """
-    blur_kernel = GaussianKernel(np.arange(-2, 3), blur_sigma)
+    blur_kernel = GaussianKernel(np.arange(-1, 2), blur_sigma)
     blur_kernel /= np.sum(blur_kernel)
 
     n = np.prod(super_size)
     row1 = np.zeros(n)
-    row1[[-2, -1, 0, 1, 2]] = blur_kernel
+    row1[[ -1, 0, 1]] = blur_kernel
 
     col1 = np.zeros(n)
     col1[0] = row1[0]
